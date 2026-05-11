@@ -82,6 +82,49 @@ export const AVATAR_REGISTRY: AvatarDescriptor[] = [
     author: "Tomás Laulhé",
     publicSafe: true,
   },
+
+  // -----------------------------------------------------------------------
+  // Pack "Dress to Impress" (avatares de moda — estilo Roblox DTI / Lana).
+  //
+  // ⚠️ LEGAL: estas entradas son PLACEHOLDERS. Apuntan a rutas locales que
+  // deben ser provistas por el usuario con un asset propio o de licencia
+  // verificada (CC0 / CC-BY / MIT / Mixamo). NO desplegar a producción
+  // mientras `publicSafe` siga en false.
+  //
+  // - "Lana" referencia un personaje icónico del juego DTI; no usar el modelo
+  //   oficial de Roblox (UGC restrictiva). Sustituir por un avatar humanoide
+  //   propio con estética similar.
+  // - Para añadir el modelo: colocar archivo en
+  //   `public/avatars/<id>/model.glb` y actualizar `license`/`author` y
+  //   poner `publicSafe: true` solo si la licencia lo permite.
+  // -----------------------------------------------------------------------
+  {
+    id: "lana",
+    name: "Lana (DTI)",
+    url: "/avatars/lana/model.glb",
+    format: "glb",
+    license: "UGC PENDING — verify rights before shipping",
+    author: "TBD",
+    publicSafe: false,
+  },
+  {
+    id: "dti-runway-model",
+    name: "Modelo de pasarela",
+    url: "/avatars/dti-runway-model/model.glb",
+    format: "glb",
+    license: "UGC PENDING — verify rights before shipping",
+    author: "TBD",
+    publicSafe: false,
+  },
+  {
+    id: "dti-glam",
+    name: "Glam diva",
+    url: "/avatars/dti-glam/model.glb",
+    format: "glb",
+    license: "UGC PENDING — verify rights before shipping",
+    author: "TBD",
+    publicSafe: false,
+  },
 ];
 
 export function findAvatar(id: string): AvatarDescriptor | undefined {

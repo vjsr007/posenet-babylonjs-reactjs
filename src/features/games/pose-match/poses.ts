@@ -116,8 +116,13 @@ export const TARGET_POSES: TargetPose[] = [
   },
 ];
 
+import { DTI_POSES } from "./dti-poses";
+
+/** Pool completo: pack base + pack DTI. */
+export const POSE_POOL: TargetPose[] = [...TARGET_POSES, ...DTI_POSES];
+
 export function pickRandomPoses(n: number): TargetPose[] {
-  const pool = [...TARGET_POSES];
+  const pool = [...POSE_POOL];
   const out: TargetPose[] = [];
   while (out.length < n && pool.length > 0) {
     const idx = Math.floor(Math.random() * pool.length);
