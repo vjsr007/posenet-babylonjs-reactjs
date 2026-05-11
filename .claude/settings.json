@@ -1,0 +1,57 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(./**)",
+      "Write(./src/**)",
+      "Write(./docs/**)",
+      "Write(./tests/**)",
+      "Write(./public/avatars/**)",
+      "Write(./.claude/**)",
+      "Write(./.github/**)",
+      "Edit(./src/**)",
+      "Edit(./docs/**)",
+      "Edit(./tests/**)",
+      "Edit(./public/avatars/**)",
+      "Edit(./AGENTS.md)",
+      "Edit(./README.md)",
+      "Bash(pnpm install)",
+      "Bash(pnpm dev)",
+      "Bash(pnpm build)",
+      "Bash(pnpm preview)",
+      "Bash(pnpm test*)",
+      "Bash(pnpm lint*)",
+      "Bash(pnpm format*)",
+      "Bash(pnpm typecheck)",
+      "Bash(pnpm dlx*)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(git checkout*)",
+      "Bash(git add*)",
+      "Bash(git commit*)"
+    ],
+    "ask": [
+      "Bash(git push*)",
+      "Bash(git reset*)",
+      "Bash(git rebase*)",
+      "Bash(git rm*)",
+      "Bash(rm*)",
+      "Bash(del*)",
+      "Bash(Remove-Item*)",
+      "Write(./legacy/**)",
+      "Edit(./legacy/**)",
+      "Edit(./package.json)"
+    ],
+    "deny": [
+      "Read(./.env*)",
+      "Read(./**/*secret*)",
+      "Read(./**/*credential*)",
+      "Bash(curl*api*key*)",
+      "Bash(rm -rf /*)"
+    ]
+  },
+  "env": {
+    "PNPM_HOME_NOTICE": "Use pnpm only. Never npm/yarn."
+  }
+}

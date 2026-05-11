@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --hud-score: "0";
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-arena-bg text-white;
+    font-feature-settings: "cv11", "ss01";
+  }
+}
+
+@layer components {
+  .arena-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2
+           font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .arena-btn-primary {
+    @apply arena-btn bg-arena-accent hover:bg-arena-accent/90 text-white;
+  }
+  .arena-btn-ghost {
+    @apply arena-btn bg-arena-surface hover:bg-arena-surface/70 text-white/90;
+  }
+  .arena-card {
+    @apply bg-arena-surface rounded-xl p-4 shadow-lg;
+  }
+}

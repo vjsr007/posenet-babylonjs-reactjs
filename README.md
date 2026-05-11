@@ -1,68 +1,61 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# PoseArena
 
-## Available Scripts
+> Minijuegos web controlados por la pose de tu cuerpo. Vite + React 18 + Babylon.js 7 + TF.js MoveNet.
 
-In the project directory, you can run:
+**Estado:** v1 en desarrollo · juego inicial *Pose Match* · 9 juegos planeados (ver [`docs/GAMES.md`](docs/GAMES.md)).
 
-### `npm start`
+## Quick start
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```bash
+pnpm install
+pnpm dev          # http://localhost:5173
+```
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Scripts
 
-### `npm test`
+| Script | Descripción |
+|---|---|
+| `pnpm dev` | servidor Vite con HMR |
+| `pnpm build` | typecheck + build producción |
+| `pnpm preview` | preview del build |
+| `pnpm test` | unit tests Vitest watch |
+| `pnpm test:run` | unit tests CI |
+| `pnpm test:e2e` | Playwright |
+| `pnpm lint` | Biome lint |
+| `pnpm typecheck` | tsc --noEmit |
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Stack
 
-### `npm run build`
+- **Build:** Vite 5 + TypeScript 5.6 estricto
+- **UI:** React 18.3 (hooks) + Tailwind 3 + lucide-react
+- **Estado:** Zustand 4
+- **3D:** Babylon.js 7 (imports específicos, no barrel)
+- **Pose:** TF.js 4 + MoveNet Lightning en Web Worker
+- **Tests:** Vitest + Playwright + Testing Library
+- **Lint/format:** Biome
+- **Package manager:** pnpm únicamente
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Documentación
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+- [`docs/PRD.md`](docs/PRD.md) — requisitos producto
+- [`docs/SPEC.md`](docs/SPEC.md) — especificación técnica
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — diagrama + ADRs
+- [`docs/PLAN.md`](docs/PLAN.md) — plan de fases
+- [`docs/TASKS.md`](docs/TASKS.md) — backlog atómico
+- [`docs/GAMES.md`](docs/GAMES.md) — los 9 juegos
+- [`docs/AVATARS.md`](docs/AVATARS.md) — catálogo + licencias
+- [`docs/MIGRATION.md`](docs/MIGRATION.md) — Strangler Fig desde código legacy
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Para agentes
 
-### `npm run eject`
+- [`AGENTS.md`](AGENTS.md) — entry point compartido
+- [`.claude/CLAUDE.md`](.claude/CLAUDE.md) — Claude Code
+- [`.github/copilot-instructions.md`](.github/copilot-instructions.md) — Copilot
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Código legado
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+El código original (CRA + React 16 + PoseNet) está preservado en [`legacy/`](legacy/) durante la migración. No editarlo. Bugs catalogados en [`docs/MIGRATION.md`](docs/MIGRATION.md).
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Licencia
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Código del proyecto: MIT. Avatares: licencias variadas — ver [`docs/AVATARS.md`](docs/AVATARS.md). Algunos modelos del repo legacy (Mario, Sinon, Stormtrooper) NO se incluyen en builds públicos.
