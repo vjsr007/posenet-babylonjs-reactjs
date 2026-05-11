@@ -28,34 +28,61 @@ export function usePoseDetection(videoRef: React.RefObject<HTMLVideoElement | nu
         return;
       }
 
-      // 1. webcam
+      // 1. webcam — intenta constraints ideales; si fallan por OverconstrainedError, reintenta sin ellos
+      let stream: MediaStream | null = null;
+      const tryGet = (constraints: MediaStreamConstraints) =>
+        navigator.mediaDevices.getUserMedia(constraints);
       try {
-        streamRef.current = await navigator.mediaDevices.getUserMedia({
-          video: { width: 640, height: 480, facingMode: "user" },
-          audio: false,
-        });
+        try {
+          stream = await tryGet({
+            video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
+            audio: false,
+          });
+        } catch (err) {
+          const name = err instanceof Error ? err.name : "Error";
+          if (name === "OverconstrainedError" || name === "ConstraintNotSatisfiedError") {
+            stream = await tryGet({ video: true, audio: false });
+          } else {
+            throw err;
+          }
+        }
       } catch (err) {
         const name = err instanceof Error ? err.name : "Error";
         let msg: string;
         if (name === "NotAllowedError" || name === "PermissionDeniedError") {
           msg =
-            "Permiso de cámara denegado. Habilítala en el icono del candado del navegador y recarga.";
+            "Permiso de cámara denegado. Haz clic en el icono del candado de la barra de direcciones y permite la cámara, luego recarga.";
         } else if (name === "NotFoundError" || name === "DevicesNotFoundError") {
           msg = "No se detecta ninguna cámara conectada.";
+        } else if (
+          name === "NotReadableError" ||
+          name === "TrackStartError" ||
+          name === "AbortError"
+        ) {
+          msg =
+            "La cámara está en uso por otra aplicación (Zoom, Teams, Meet, OBS…). Ciérrala y recarga.";
+        } else if (name === "SecurityError") {
+          msg = "El navegador bloqueó la cámara por seguridad. Usa http://localhost o HTTPS.";
         } else {
           msg = `No se pudo iniciar la cámara: ${name}`;
         }
         setError(msg);
         return;
       }
-      if (cancelled) return;
-      video.srcObject = streamRef.current;
+      if (cancelled || !stream) {
+        // El efecto se desmontó (StrictMode) mientras esperábamos el stream → libéralo.
+        if (stream) for (const t of stream.getTracks()) t.stop();
+        return;
+      }
+      streamRef.current = stream;
+      video.srcObject = stream;
       try {
         await video.play();
       } catch (err) {
         setError(`No se pudo reproducir el video: ${err instanceof Error ? err.message : "error"}`);
         return;
       }
+      if (cancelled) return;
 
       // 2. worker
       const worker = new Worker(new URL("./worker.ts", import.meta.url), { type: "module" });
