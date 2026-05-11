@@ -28,6 +28,7 @@ export function CalibrationView({
   usePoseDetection(videoRef);
 
   const ready = usePoseStore((s) => s.ready);
+  const error = usePoseStore((s) => s.error);
   const setCalibration = usePoseStore((s) => s.setCalibration);
   const calibration = usePoseStore((s) => s.calibration);
 
@@ -71,9 +72,24 @@ export function CalibrationView({
             muted
             className="w-full h-full object-cover -scale-x-100"
           />
-          {!ready && (
+          {!ready && !error && (
             <div className="absolute inset-0 grid place-items-center bg-black/60 text-white/80">
               Cargando MoveNet...
+            </div>
+          )}
+          {error && (
+            <div className="absolute inset-0 grid place-items-center bg-black/80 text-center px-6">
+              <div className="space-y-3">
+                <p className="text-red-400 font-bold">No se pudo iniciar la cámara</p>
+                <p className="text-white/70 text-sm">{error}</p>
+                <button
+                  type="button"
+                  onClick={() => location.reload()}
+                  className="arena-btn-primary"
+                >
+                  Recargar
+                </button>
+              </div>
             </div>
           )}
           {calibrating && (
@@ -86,7 +102,7 @@ export function CalibrationView({
           <button
             type="button"
             onClick={captureCalibration}
-            disabled={!ready || calibrating}
+            disabled={!ready || calibrating || !!error}
             className="arena-btn-primary"
           >
             {calibrating ? "Capturando..." : "Capturar T-pose"}

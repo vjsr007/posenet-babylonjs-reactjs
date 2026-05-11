@@ -12,6 +12,7 @@ export function usePoseDetection(videoRef: React.RefObject<HTMLVideoElement | nu
   const rafRef = useRef<number | null>(null);
   const setPose = usePoseStore((s) => s.setPose);
   const setReady = usePoseStore((s) => s.setReady);
+  const setError = usePoseStore((s) => s.setError);
 
   useEffect(() => {
     let cancelled = false;
@@ -20,26 +21,57 @@ export function usePoseDetection(videoRef: React.RefObject<HTMLVideoElement | nu
       const video = videoRef.current;
       if (!video) return;
 
+      setError(null);
+
+      if (!navigator.mediaDevices?.getUserMedia) {
+        setError("Tu navegador no permite acceder a la cámara (necesita HTTPS o localhost).");
+        return;
+      }
+
       // 1. webcam
       try {
         streamRef.current = await navigator.mediaDevices.getUserMedia({
           video: { width: 640, height: 480, facingMode: "user" },
           audio: false,
         });
-      } catch {
+      } catch (err) {
+        const name = err instanceof Error ? err.name : "Error";
+        let msg: string;
+        if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+          msg =
+            "Permiso de cámara denegado. Habilítala en el icono del candado del navegador y recarga.";
+        } else if (name === "NotFoundError" || name === "DevicesNotFoundError") {
+          msg = "No se detecta ninguna cámara conectada.";
+        } else {
+          msg = `No se pudo iniciar la cámara: ${name}`;
+        }
+        setError(msg);
         return;
       }
       if (cancelled) return;
       video.srcObject = streamRef.current;
-      await video.play();
+      try {
+        await video.play();
+      } catch (err) {
+        setError(`No se pudo reproducir el video: ${err instanceof Error ? err.message : "error"}`);
+        return;
+      }
 
       // 2. worker
       const worker = new Worker(new URL("./worker.ts", import.meta.url), { type: "module" });
       workerRef.current = worker;
       worker.addEventListener("message", (e: MessageEvent) => {
-        const msg = e.data as { type: string; pose?: import("@/types/pose").Pose };
+        const msg = e.data as {
+          type: string;
+          pose?: import("@/types/pose").Pose;
+          message?: string;
+        };
         if (msg.type === "ready") setReady(true);
         if (msg.type === "pose" && msg.pose) setPose(msg.pose);
+        if (msg.type === "error" && msg.message) setError(`MoveNet: ${msg.message}`);
+      });
+      worker.addEventListener("error", (e: ErrorEvent) => {
+        setError(`Worker MoveNet falló: ${e.message}`);
       });
       worker.postMessage({ type: "init" });
 
@@ -73,5 +105,5 @@ export function usePoseDetection(videoRef: React.RefObject<HTMLVideoElement | nu
       streamRef.current = null;
       setReady(false);
     };
-  }, [videoRef, setPose, setReady]);
+  }, [videoRef, setPose, setReady, setError]);
 }
