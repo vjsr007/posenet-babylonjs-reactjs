@@ -1,0 +1,31 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - heading "PoseArena" [level=1] [ref=e6]
+    - generic [ref=e7]: v1 · lobby
+  - main [ref=e8]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - img [ref=e13]
+          - text: PoseArena · Lobby
+        - heading "Elige un juego" [level=2] [ref=e15]
+        - paragraph [ref=e16]: Necesitas webcam y un espacio donde quepas de pie. Todos los juegos usan tu pose corporal como mando.
+      - generic [ref=e17]:
+        - button "ready Pose Match Imita la silueta antes de que se acabe el tiempo." [ref=e18] [cursor=pointer]:
+          - generic [ref=e19]:
+            - img [ref=e20]
+            - generic [ref=e22]: ready
+          - heading "Pose Match" [level=3] [ref=e23]
+          - paragraph [ref=e24]: Imita la silueta antes de que se acabe el tiempo.
+        - button "beta Estatua Muévete cuando suena la música. Quédate quieto cuando para." [ref=e25] [cursor=pointer]:
+          - generic [ref=e26]:
+            - img [ref=e27]
+            - generic [ref=e29]: beta
+          - heading "Estatua" [level=3] [ref=e30]
+          - paragraph [ref=e31]: Muévete cuando suena la música. Quédate quieto cuando para.
+        - button "beta Yoga Flow Sostén la asana el mayor tiempo posible." [ref=e32] [cursor=pointer]:
+          - generic [ref=e33]:
+            - img [ref=e34]
+            - generic [ref=e36]: beta
+          - heading "Yoga Flow" [level=3] [ref=e37]
+          - paragraph [ref=e38]: Sostén la asana el mayor tiempo posible.

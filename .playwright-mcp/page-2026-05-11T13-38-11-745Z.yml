@@ -1,0 +1,14 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - button "Volver al lobby" [ref=e39] [cursor=pointer]:
+        - img [ref=e40]
+        - text: Lobby
+      - heading "PoseArena" [level=1] [ref=e6]
+    - generic [ref=e7]: v1 · pose-match
+  - main [ref=e8]:
+    - generic [ref=e43]:
+      - heading "Calibración" [level=2] [ref=e44]
+      - paragraph [ref=e45]: Adopta la pose en T (brazos extendidos a los lados) y mantén 3 segundos.
+      - generic [ref=e48]: Cargando MoveNet...
+      - button "Capturar T-pose" [disabled]

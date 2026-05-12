@@ -1,0 +1,14 @@
+[     113ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/chunk-RQRZJDNV.js?v=88a43ecb:21548
+[    4259ms] [LOG] [pose] requesting camera @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:20
+[    4260ms] [LOG] [pose] requesting camera @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:20
+[    4511ms] [LOG] [pose] camera error NotFoundError NotFoundError: Requested device not found @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:28
+[    4511ms] [LOG] [pose] setError No se detecta ninguna cámara conectada. store before: null @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:37
+[    4511ms] [LOG] [pose] store after: No se detecta ninguna cámara conectada. @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:39
+[    4512ms] [LOG] [pose] camera error NotFoundError NotFoundError: Requested device not found @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:28
+[    4512ms] [LOG] [pose] setError No se detecta ninguna cámara conectada. store before: No se detecta ninguna cámara conectada. @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:37
+[    4512ms] [LOG] [pose] store after: No se detecta ninguna cámara conectada. @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:39
+[   31536ms] [LOG] [fresh-test] 1778506594129 @ :0
+[   89444ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:559
+[   91797ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5173/:0
+[   95157ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5173/:0
+[  100342ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/chunk-RQRZJDNV.js?v=7040d6e5:21548

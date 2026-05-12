@@ -1,43 +1,103 @@
 import { create } from "zustand";
 
-export type GameId = "pose-match" | "statue-game" | "yoga-flow";
+export type RouteId =
+  | "home"
+  | "play"
+  | "closet"
+  | "shop"
+  | "pass"
+  | "friends"
+  | "profile"
+  | "settings";
+
+export type GameId = "pose-match" | "statue" | "yoga" | "shadow" | "squat";
 
 interface LobbyState {
-  current: GameId | null;
-  open: (id: GameId) => void;
+  route: RouteId;
+  gameOpen: GameId | null;
+  dtiOpen: boolean;
+  toast: string | null;
+  setRoute: (r: RouteId) => void;
+  openGame: (id: GameId) => void;
+  closeGame: () => void;
+  openDTI: () => void;
+  closeDTI: () => void;
+  showToast: (msg: string) => void;
+  /** @deprecated — alias for closeGame, kept for existing game components */
   exit: () => void;
 }
 
-export const useLobbyStore = create<LobbyState>((set) => ({
-  current: null,
-  open: (id) => set({ current: id }),
-  exit: () => set({ current: null }),
+export const useLobbyStore = create<LobbyState>((set, get) => ({
+  route: "home",
+  gameOpen: null,
+  dtiOpen: false,
+  toast: null,
+
+  setRoute: (r) => set({ route: r }),
+  openGame: (id) => set({ gameOpen: id }),
+  closeGame: () => set({ gameOpen: null }),
+  openDTI: () => set({ dtiOpen: true }),
+  closeDTI: () => set({ dtiOpen: false }),
+
+  showToast: (msg) => {
+    set({ toast: msg });
+    setTimeout(() => {
+      if (get().toast === msg) set({ toast: null });
+    }, 1800);
+  },
+
+  // Backward-compat alias used by StatueGame, YogaFlowGame, PoseMatchGame
+  exit: () => set({ gameOpen: null }),
 }));
 
 export interface GameMeta {
   id: GameId;
   name: string;
-  tagline: string;
-  status: "ready" | "beta";
+  tag: string;
+  variant: "holo" | "poster" | "magazine" | "minimal";
+  ready: boolean;
+  players: string;
 }
 
-export const GAMES: GameMeta[] = [
+export const GAME_CATALOG: GameMeta[] = [
   {
     id: "pose-match",
     name: "Pose Match",
-    tagline: "Imita la silueta antes de que se acabe el tiempo.",
-    status: "ready",
+    tag: "Imita la silueta en 3s",
+    variant: "poster",
+    ready: true,
+    players: "840K",
   },
   {
-    id: "statue-game",
-    name: "Estatua",
-    tagline: "Muévete cuando suena la música. Quédate quieto cuando para.",
-    status: "beta",
+    id: "statue",
+    name: "Statue Game",
+    tag: "Música on → muévete",
+    variant: "magazine",
+    ready: true,
+    players: "612K",
   },
   {
-    id: "yoga-flow",
+    id: "yoga",
     name: "Yoga Flow",
-    tagline: "Sostén la asana el mayor tiempo posible.",
-    status: "beta",
+    tag: "Mantén la asana",
+    variant: "minimal",
+    ready: true,
+    players: "320K",
+  },
+  {
+    id: "shadow",
+    name: "Shadow Boxer",
+    tag: "Golpea los guantes",
+    variant: "poster",
+    ready: true,
+    players: "—",
+  },
+  {
+    id: "squat",
+    name: "Squat Survivor",
+    tag: "Vampire Survivors + cardio",
+    variant: "magazine",
+    ready: true,
+    players: "—",
   },
 ];

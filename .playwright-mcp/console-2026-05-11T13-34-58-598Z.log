@@ -1,0 +1,9 @@
+[      51ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/chunk-RQRZJDNV.js?v=88a43ecb:21548
+[    8019ms] [LOG] [pose] requesting camera @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:20
+[    8019ms] [LOG] [pose] requesting camera @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:20
+[    8020ms] [LOG] [pose] camera error NotFoundError NotFoundError: Requested device not found @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:28
+[    8020ms] [LOG] [pose] setError No se detecta ninguna cámara conectada. store before: null @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:37
+[    8020ms] [LOG] [pose] store after: No se detecta ninguna cámara conectada. @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:39
+[    8021ms] [LOG] [pose] camera error NotFoundError NotFoundError: Requested device not found @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:28
+[    8021ms] [LOG] [pose] setError No se detecta ninguna cámara conectada. store before: No se detecta ninguna cámara conectada. @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:37
+[    8021ms] [LOG] [pose] store after: No se detecta ninguna cámara conectada. @ http://localhost:5173/src/features/pose-detection/usePoseDetection.ts?t=1778506462023:39
