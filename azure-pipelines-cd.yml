@@ -1,0 +1,151 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# posearena  |  Azure DevOps CD Pipeline
+# Builds the Vite SPA and atomic-swaps it onto the Hostinger VPS (root@93.188.163.173).
+# Fires on every push to main.
+#
+# Required ADO Variable Group: "posearena-production" (mark VPS_SSH_KEY as secret):
+#   VPS_SSH_KEY     — base64 of ed25519 private key for root@93.188.163.173
+#
+# One-time setup:
+#   1. Pipelines → Library → + Variable group → "posearena-production"
+#   2. Add VPS_SSH_KEY (base64 -w0 of id_ed25519 private key, lock=secret)
+#   3. Authorize this pipeline to read the variable group
+#   4. Pipelines → New → Azure Repos / GitHub → posearena → azure-pipelines-cd.yml
+# ─────────────────────────────────────────────────────────────────────────────
+name: cd-$(Date:yyyyMMdd)-$(Rev:r)
+
+trigger:
+  branches:
+    include: [main]
+  paths:
+    exclude:
+      - docs/**
+      - '*.md'
+      - legacy/**
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: posearena-production
+  - name: NODE_VERSION
+    value: '20'
+  - name: PNPM_VERSION
+    value: '9.12.0'
+  - name: VPS_HOST
+    value: '93.188.163.173'
+  - name: VPS_USER
+    value: 'root'
+  - name: WEB_ROOT
+    value: '/srv/www/posearena'
+
+stages:
+  - stage: Build
+    jobs:
+      - job: build
+        displayName: 'Vite build'
+        timeoutInMinutes: 15
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          - task: NodeTool@0
+            displayName: 'Use Node.js $(NODE_VERSION)'
+            inputs:
+              versionSpec: $(NODE_VERSION)
+
+          - script: |
+              npm install -g pnpm@$(PNPM_VERSION)
+              pnpm config set store-dir $(Pipeline.Workspace)/.pnpm-store
+            displayName: 'Install pnpm'
+
+          - task: Cache@2
+            displayName: 'Cache pnpm store'
+            inputs:
+              key: 'pnpm | "$(Agent.OS)" | pnpm-lock.yaml'
+              path: $(Pipeline.Workspace)/.pnpm-store
+              restoreKeys: |
+                pnpm | "$(Agent.OS)"
+
+          - script: pnpm install --frozen-lockfile
+            displayName: 'Install dependencies'
+
+          - script: pnpm build
+            displayName: 'Build (tsc + vite build)'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Upload web dist'
+            inputs:
+              targetPath: dist
+              artifact: web-dist-$(Build.BuildId)
+              publishLocation: pipeline
+
+  - stage: Deploy
+    dependsOn: Build
+    jobs:
+      - deployment: deploy_vps
+        displayName: 'Atomic-swap to VPS'
+        environment: 'production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  displayName: 'Download dist'
+                  inputs:
+                    artifact: web-dist-$(Build.BuildId)
+                    path: $(Pipeline.Workspace)/dist
+
+                - bash: |
+                    echo "$VPS_SSH_KEY" | base64 -d > /tmp/vps_key
+                    chmod 600 /tmp/vps_key
+                    ssh-keyscan -T 30 $(VPS_HOST) >> ~/.ssh/known_hosts 2>/dev/null || true
+                  displayName: 'Configure SSH'
+                  env:
+                    VPS_SSH_KEY: $(VPS_SSH_KEY)
+
+                - bash: |
+                    set -euo pipefail
+                    INCOMING=/tmp/posearena-incoming-$(Build.BuildId)
+                    ssh -i /tmp/vps_key $(VPS_USER)@$(VPS_HOST) "rm -rf $INCOMING && mkdir -p $INCOMING"
+                    tar -czf - -C $(Pipeline.Workspace)/dist . | \
+                      ssh -i /tmp/vps_key $(VPS_USER)@$(VPS_HOST) "tar -xzf - -C $INCOMING"
+
+                    ssh -i /tmp/vps_key $(VPS_USER)@$(VPS_HOST) bash -s <<ENDSSH
+                      set -euo pipefail
+                      # Atomic swap: rename incoming → web_root, archive previous
+                      if [ -d "$(WEB_ROOT)" ]; then
+                        mv "$(WEB_ROOT)" "$(WEB_ROOT).prev-\$(date +%s)"
+                      fi
+                      mv "$INCOMING" "$(WEB_ROOT)"
+                      chown -R nginx:nginx "$(WEB_ROOT)" 2>/dev/null || true
+
+                      # Mirror to /var/www/posearena if it exists (legacy path)
+                      if [ -d /var/www/posearena ]; then
+                        rsync -a --delete "$(WEB_ROOT)/" /var/www/posearena/ 2>/dev/null || cp -r "$(WEB_ROOT)/." /var/www/posearena/
+                      fi
+
+                      # Prune old .prev-* archives, keep last 3
+                      ls -1dt $(WEB_ROOT).prev-* 2>/dev/null | tail -n +4 | xargs -r rm -rf
+
+                      nginx -t && systemctl reload nginx
+                      echo "==> Deploy complete at \$(date -u +%FT%TZ)"
+                    ENDSSH
+                  displayName: 'Deploy to VPS'
+
+                - bash: |
+                    for attempt in 1 2 3 4 5; do
+                      STATUS=$(curl -sf -o /dev/null -w "%{http_code}" --max-time 10 https://posearena.pick-app.com.mx/ 2>/dev/null || echo "000")
+                      echo "Health check attempt $attempt: HTTP $STATUS"
+                      [ "$STATUS" = "200" ] && { echo "==> Production is healthy"; exit 0; }
+                      sleep 10
+                    done
+                    echo "##vso[task.logissue type=warning]Production health check failed — manual verification required."
+                  displayName: 'Production health check'
+                  continueOnError: true
+
+                - bash: rm -f /tmp/vps_key
+                  displayName: 'Cleanup SSH key'
+                  condition: always()
