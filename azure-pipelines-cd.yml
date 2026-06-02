@@ -16,7 +16,7 @@ name: cd-$(Date:yyyyMMdd)-$(Rev:r)
 
 trigger:
   branches:
-    include: [main]
+    include: [main, master]
   paths:
     exclude:
       - docs/**
