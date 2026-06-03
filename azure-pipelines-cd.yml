@@ -109,11 +109,11 @@ stages:
                 - bash: |
                     set -euo pipefail
                     INCOMING=/tmp/posearena-incoming-$(Build.BuildId)
-                    ssh -i /tmp/vps_key $(VPS_USER)@$(VPS_HOST) "rm -rf $INCOMING && mkdir -p $INCOMING"
+                    ssh -i /tmp/vps_key -o StrictHostKeyChecking=accept-new $(VPS_USER)@$(VPS_HOST) "rm -rf $INCOMING && mkdir -p $INCOMING"
                     tar -czf - -C $(Pipeline.Workspace)/dist . | \
-                      ssh -i /tmp/vps_key $(VPS_USER)@$(VPS_HOST) "tar -xzf - -C $INCOMING"
+                      ssh -i /tmp/vps_key -o StrictHostKeyChecking=accept-new $(VPS_USER)@$(VPS_HOST) "tar -xzf - -C $INCOMING"
 
-                    ssh -i /tmp/vps_key $(VPS_USER)@$(VPS_HOST) bash -s <<ENDSSH
+                    ssh -i /tmp/vps_key -o StrictHostKeyChecking=accept-new $(VPS_USER)@$(VPS_HOST) bash -s <<ENDSSH
                       set -euo pipefail
                       # Atomic swap: rename incoming → web_root, archive previous
                       if [ -d "$(WEB_ROOT)" ]; then
